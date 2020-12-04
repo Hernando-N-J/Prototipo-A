@@ -15,30 +15,13 @@ public class TappyBirdGameManager : MonoBehaviour
     public GameObject gameoverPage;
     public GameObject countdownPage;
     public Text scoreText;
+    public Text highScoreText;
 
     private int score = 0;
     private bool isGameover = true;
 
     public int Score { get => score; }
     public bool IsGameover { get => isGameover; }
-
-    void Awake()
-    {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-    }
-
-    private void Start()
-    {
-        SetPageState(PageState.Start);
-    }
 
     private void OnEnable()
     {
@@ -54,6 +37,26 @@ public class TappyBirdGameManager : MonoBehaviour
         TapController.OnPlayerDied -= OnPlayerDiedMethod;
     }
 
+    void Awake()
+    {
+        if (Instance != null) Destroy(gameObject);
+        else { Instance = this; DontDestroyOnLoad(gameObject); }
+    }
+
+    private void Start()
+    {
+        SetPageState(PageState.Start);
+        ShowHighScore();
+    }
+
+    // activated when play button is pressed
+    // show up countdown page and execute counter (OnEnable)
+    public void StartGame() => SetPageState(PageState.Countdown);
+
+    public void ShowHighScore() => highScoreText.text = "HighScore " + PlayerPrefs.GetInt("HighScore");
+
+    public void ResetHighScore() { PlayerPrefs.DeleteKey("HighScore"); ShowHighScore(); }
+
     private void OnCountdownFinishedMethod()
     {
         // what to do after countdown finishes?
@@ -66,30 +69,22 @@ public class TappyBirdGameManager : MonoBehaviour
         isGameover = false;
     }
 
-    private void OnPlayerScoredMethod()
-    {
-        score++;
-        scoreText.text = score.ToString();
-    }
+    private void OnPlayerScoredMethod() { score++; scoreText.text = score.ToString(); }
 
     private void OnPlayerDiedMethod()
     {
         isGameover = true;
         int savedScore = PlayerPrefs.GetInt("HighScore");
         if (score > savedScore) PlayerPrefs.SetInt("HighScore", score);
+        ShowHighScore();
         SetPageState(PageState.GameOver);
     }
-
-    // activated when play button is pressed
-    // show up countdown page and execute counter (OnEnable)
-    public void StartGame()
-    => SetPageState(PageState.Countdown);
 
     // activated when replay button is pressed
     public void GameOverConfirmedMethod()
     {
         OnGameoverConfirmedEvent();  // event sent to TapController
-        scoreText.text = "Score " + "\n0"; // reset score
+        scoreText.text = "0"; // reset score
         SetPageState(PageState.Start); // show up start page
     }
 

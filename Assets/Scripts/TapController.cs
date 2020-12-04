@@ -41,6 +41,7 @@ public class TapController : MonoBehaviour
 
         downRotation = Quaternion.Euler(0, 0, -90);
         forwardRotation = Quaternion.Euler(0, 0, 35);
+
     }
 
     private void Update()
@@ -56,6 +57,9 @@ public class TapController : MonoBehaviour
         }
 
         transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltSmooth * Time.deltaTime);
+
+        if (Input.GetKeyDown(KeyCode.Escape)) { Application.Quit(); }
+
     }
 
     private void OnGameStartedMethod()
@@ -95,3 +99,5 @@ public class TapController : MonoBehaviour
         }
     }
 }
+
+
