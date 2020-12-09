@@ -61,5 +61,8 @@
         "mono",
         "parallaxer",
         "tappy"
+    ],
+    "cSpell.words": [
+        "lerp"
     ]
 }
